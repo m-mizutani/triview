@@ -25,7 +25,12 @@ func newAdvisoryCommand(cfg *config) *cli.Command {
 			case 1:
 				return showAdvisoryPackages(cfg, c.Args().Get(0))
 			case 2:
-				return showAdvisoryPackageInfo(cfg, c.Args().Get(0), c.Args().Get(1))
+				pkgName := c.Args().Get(1)
+				if pkgName == "*" || pkgName == "." {
+					return dumpAdvisoryPackageInfo(cfg, c.Args().Get(0))
+				} else {
+					return showAdvisoryPackageInfo(cfg, c.Args().Get(0), pkgName)
+				}
 			}
 			return nil
 		},
@@ -96,6 +101,38 @@ func showAdvisoryPackageInfo(cfg *config, source string, pkgName string) error {
 
 		pkgBucket.ForEach(func(k, v []byte) error {
 			fmt.Fprintf(cfg.out, "%s: %s\n", string(k), string(v))
+			return nil
+		})
+
+		return nil
+	}
+
+	if err := cfg.db.View(view); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func dumpAdvisoryPackageInfo(cfg *config, source string) error {
+	view := func(tx *bbolt.Tx) error {
+		srcBucket := tx.Bucket([]byte(source))
+		if srcBucket == nil {
+			return goerr.Wrap(errResourceNotFound, "No such source bucket").With("source", source)
+		}
+
+		srcBucket.ForEach(func(k, v []byte) error {
+			pkgBucket := srcBucket.Bucket([]byte(k))
+			if pkgBucket == nil {
+				// ??
+				return nil
+			}
+			pkgName := string(k)
+
+			pkgBucket.ForEach(func(k, v []byte) error {
+				fmt.Fprintf(cfg.out, "%s:%s: %s\n", pkgName, string(k), string(v))
+				return nil
+			})
 			return nil
 		})
 
