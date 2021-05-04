@@ -47,6 +47,7 @@ func Run(argv []string) error {
 		Commands: []*cli.Command{
 			newVulnerabilityCommand(&cfg),
 			newAdvisoryCommand(&cfg),
+			newTrivyCommand(&cfg),
 		},
 	}
 
