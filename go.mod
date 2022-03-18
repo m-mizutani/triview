@@ -1,4 +1,4 @@
-module github.com/m-mizutani/trivew
+module github.com/m-mizutani/triview
 
 go 1.16
 
