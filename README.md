@@ -5,7 +5,7 @@ CLI tool to lookup [trivy database](https://github.com/aquasecurity/trivy-db/). 
 ## Setup
 
 ```
-go get github.com/m-mizutani/triview
+go install github.com/m-mizutani/triview@latest
 ```
 
 ## Usage
