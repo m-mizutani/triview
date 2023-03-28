@@ -48,6 +48,7 @@ func Run(argv []string) error {
 			newVulnerabilityCommand(&cfg),
 			newAdvisoryCommand(&cfg),
 			newTrivyCommand(&cfg),
+			newDumpCommand(&cfg),
 		},
 	}
 
